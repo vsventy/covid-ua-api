@@ -1,10 +1,10 @@
 from flask import Blueprint, current_app, jsonify
 from flask_restful import Api
 from marshmallow import ValidationError
-from covidapi.extensions import apispec
-from covidapi.api.resources import UserResource, UserList
-from covidapi.api.schemas import UserSchema
 
+from covidapi.extensions import apispec
+from covidapi.api.resources import CovidItemList, CovidResource, UserResource, UserList
+from covidapi.api.schemas import UserSchema, CovidItemSchema
 
 blueprint = Blueprint("api", __name__, url_prefix="/api/v1")
 api = Api(blueprint)
@@ -12,13 +12,18 @@ api = Api(blueprint)
 
 api.add_resource(UserResource, "/users/<int:user_id>", endpoint="user_by_id")
 api.add_resource(UserList, "/users", endpoint="users")
+api.add_resource(CovidResource, "/covid", endpoint="covid_by_date")
+api.add_resource(CovidItemList, "/covid/items", endpoint="covid_items")
 
 
 @blueprint.before_app_first_request
 def register_views():
-    apispec.spec.components.schema("UserSchema", schema=UserSchema)
-    apispec.spec.path(view=UserResource, app=current_app)
-    apispec.spec.path(view=UserList, app=current_app)
+    # apispec.spec.components.schema("UserSchema", schema=UserSchema)
+    # apispec.spec.path(view=UserResource, app=current_app)
+    # apispec.spec.path(view=UserList, app=current_app)
+    apispec.spec.components.schema("CovidItemSchema", schema=CovidItemSchema)
+    apispec.spec.path(view=CovidResource, app=current_app)
+    apispec.spec.path(view=CovidItemList, app=current_app)
 
 
 @blueprint.errorhandler(ValidationError)
