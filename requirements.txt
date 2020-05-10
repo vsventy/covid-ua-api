@@ -13,3 +13,5 @@ apispec-webframeworks
 tox
 celery[redis]
 gunicorn
+beautifulsoup4
+selenium
