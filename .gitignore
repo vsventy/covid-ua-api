@@ -94,3 +94,8 @@ cookiecutter-options.yml
 
 # IDE
 .idea/
+
+# App
+db/
+.flaskenv
+

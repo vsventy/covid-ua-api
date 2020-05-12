@@ -1,5 +1,7 @@
 FLASK_ENV=development
 FLASK_APP=covidapi.app:create_app
+USE_GUNICORN=0
+GUNICORN_WORKERS=4
 SECRET_KEY=changeme
 DATABASE_URI=sqlite:////tmp/covidapi.db
 CELERY_BROKER_URL=amqp://guest:guest@localhost/
