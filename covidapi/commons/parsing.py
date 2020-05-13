@@ -14,6 +14,7 @@ SITE_URL = 'https://www.pravda.com.ua/cdn/covid-19/cpa/'
 
 
 class CovidParser():
+
     def __init__(self):
         self.covid_dict = {
             'total': {},
@@ -28,14 +29,19 @@ class CovidParser():
             print('Error when initializing web browser driver.')
 
     def run(self):
+        self._parse_html()
+        self._save_db()
+
+    def _parse_html(self):
         try:
             self.browser.get(SITE_URL)
         except ErrorInResponseException:
             print('Error on the server side.')
 
-        time.sleep(1)
+        time.sleep(5)
 
         soup = BeautifulSoup(self.browser.page_source, 'html.parser')
+        self.browser.quit()
 
         total_containers = soup.find_all('div', class_='world-item-num')
         if total_containers:
@@ -60,8 +66,6 @@ class CovidParser():
             info_text = general_containers[1].find('span').text
             updated_at_str = ' '.join(info_text.split(' ')[-2:])
             self.covid_dict['updated_at'] = datetime.strptime(updated_at_str, '%d.%m.%Y %H:%M')
-
-        self._save_db()
 
     def _save_db(self):
         existing_item = (
