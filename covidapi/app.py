@@ -1,4 +1,6 @@
+import sentry_sdk
 from flask import Flask
+from sentry_sdk.integrations.flask import FlaskIntegration
 
 from covidapi import auth, api
 from covidapi.extensions import db, jwt, migrate, apispec, celery
@@ -9,6 +11,12 @@ def create_app(testing=False, cli=False):
     """
     app = Flask("covidapi")
     app.config.from_object("covidapi.config")
+
+    if 'SENTRY_DSN' in app.config:
+        sentry_sdk.init(
+            dsn=app.config["SENTRY_DSN"],
+            integrations=[FlaskIntegration()]
+        )
 
     if testing is True:
         app.config["TESTING"] = True

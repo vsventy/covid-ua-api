@@ -15,3 +15,4 @@ celery[redis]
 gunicorn
 beautifulsoup4
 selenium
+sentry-sdk[flask]
