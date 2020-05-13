@@ -4,7 +4,9 @@ version: '3'
 services:
   web:
     image: covidapi
-    build: .
+    restart: unless-stopped
+    build:
+      context: .
     command: bash -c ". /utils/runserver.sh"
     env_file:
       - ./.flaskenv
@@ -20,29 +22,37 @@ services:
       - "8081:8081"
   rabbitmq:
     image: rabbitmq
+    restart: unless-stopped
   redis:
     image: redis
+    restart: unless-stopped
   celeryworker:
     image: covidapi
-    command: "celery worker -A covidapi.celery_app:app -l debug"
+    restart: unless-stopped
+    command: "celery worker -A covidapi.celery_app:app -l info"
     env_file:
       - ./.flaskenv
     volumes:
       - .:/code
+      - ./db/:/db/
     depends_on:
       - rabbitmq
     environment:
+      - DATABASE_URI=sqlite:////db/covidapi.db
       - CELERY_BROKER_URL=amqp://guest:guest@rabbitmq
       - CELERY_RESULT_BACKEND_URL=redis://redis
   celerybeat:
     image: covidapi
-    command: "celery -A covidapi.celery_app:app beat -l debug"
+    restart: unless-stopped
+    command: "celery -A covidapi.celery_app:app beat -l info"
     env_file:
       - ./.flaskenv
     volumes:
       - .:/code
+      - ./db/:/db/
     depends_on:
       - rabbitmq
     environment:
+      - DATABASE_URI=sqlite:////db/covidapi.db
       - CELERY_BROKER_URL=amqp://guest:guest@rabbitmq
       - CELERY_RESULT_BACKEND_URL=redis://redis

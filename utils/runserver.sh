@@ -15,5 +15,5 @@ if [ "$USE_GUNICORN" = "1" ]; then
     --graceful-timeout=60 \
     --log-level=DEBUG;
 else
-   covidapi run;
+   covidapi run --host=0.0.0.0 --port=8081;
 fi;
