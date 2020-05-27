@@ -16,6 +16,7 @@ class PostmanAPIClient():
         }
 
         self.base_url = 'https://postman.org.ua/api/v1/{}/'
+        self.details_url = 'https://postman.org.ua/api/v1/details/{}/'
 
     def _get_notify_url(self, service_type):
         try:
@@ -26,14 +27,17 @@ class PostmanAPIClient():
         else:
             return url
 
+    def _post_notify(self, service_type, payload):
+        url = self._get_notify_url(service_type)
+        result = requests.post(url, headers=self.headers, json=payload)
+        return result.json()
+
     def send_message(self, recipient, text, service_type=int(ServiceType.TELEGRAM)):
         payload = {
             'recipient': recipient,
             'text': text
         }
-        url = self._get_notify_url(service_type)
-        result = requests.post(url, headers=self.headers, json=payload)
-        return result.json()
+        return self._post_notify(service_type, payload)
 
     def send_email(self, recipient, subject, text):
         payload = {
@@ -41,11 +45,16 @@ class PostmanAPIClient():
             'subject': subject,
             'text': text
         }
-        url = self._get_notify_url(int(ServiceType.EMAIL))
-        result = requests.post(url, headers=self.headers, json=payload)
-        return result.json()
+        return self._post_notify(int(ServiceType.EMAIL), payload)
 
-    def get_message_details(self, notify_id):
-        url = "https://postman.org.ua/api/v1/details/{}/".format(notify_id)
+    def send_notify_by_template(self, recipient, template_key, service_type):
+        payload = {
+            'recipient': recipient,
+            'template': template_key
+        }
+        return self._post_notify(service_type, payload)
+
+    def get_notify_details(self, notify_id):
+        url = self.details_url.format(notify_id)
         result = requests.get(url, headers=self.headers)
         return result.json()
