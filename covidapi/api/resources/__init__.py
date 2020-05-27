@@ -1,5 +1,13 @@
-from covidapi.api.resources.covid import CovidResource, CovidItemList
-from covidapi.api.resources.user import UserResource, UserList
+from covidapi.api.resources.covid import CovidItemList, CovidResource
+from covidapi.api.resources.postman import NotificationList, NotificationResource
+from covidapi.api.resources.user import UserList, UserResource
 
 
-__all__ = ["CovidItemList", "CovidResource", "UserResource", "UserList"]
+__all__ = [
+    "CovidItemList",
+    "CovidResource",
+    "NotificationList",
+    "NotificationResource",
+    "UserList",
+    "UserResource",
+]
